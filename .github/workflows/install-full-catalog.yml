@@ -1,0 +1,24 @@
+name: Install Full Catalog
+on:
+  push:
+    paths:
+      - '.github/workflows/install-full-catalog.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack catalog and publish site files
+        run: |
+          cp index.html index_backup_before_full_catalog.html
+          unzip -o Bathroom_Design_Studio_Full_Catalog_Starter.zip
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html index_backup_before_full_catalog.html catalog.json catalog_audit.csv README_TH.md scripts .github/workflows/catalog-sync.yml assets
+          if ! git diff --cached --quiet; then
+            git commit -m "Install Full Catalog starter and sync workflow"
+            git push
+          fi
